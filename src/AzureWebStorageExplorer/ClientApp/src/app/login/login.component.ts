@@ -10,6 +10,7 @@ export class LoginComponent {
 
   @ViewChild('azureAccount', { read: null, static: true}) azureAccount: any;
   @ViewChild('azureKey', { read: null, static: true }) azureKey: any;
+  @ViewChild('azureEndpointSuffix', { read: null, static: true }) azureEndpointSuffix: any;
 
 	public currentVersion: string | undefined;
 
@@ -23,9 +24,10 @@ export class LoginComponent {
 
 		let account = this.utilsService.getAccount();
 		let key = this.utilsService.getKey();
+		let endpointSuffix = this.utilsService.getEndpointSuffix();
 
-		if (account && key)
-			this.logIn(account, key);
+		if (account && key && endpointSuffix)
+			this.logIn(account, key, endpointSuffix);
 		else
 			this.logOut();
 	}
@@ -36,15 +38,16 @@ export class LoginComponent {
 
 		let account = encodeURIComponent(this.azureAccount.nativeElement.value);
 		let key = encodeURIComponent(this.azureKey.nativeElement.value);
+		let endpointSuffix = encodeURIComponent(this.azureEndpointSuffix.nativeElement.value);
 
-		this.logIn(account, key);
+		this.logIn(account, key, endpointSuffix);
 	}
 
-	logIn(account: string, key: string) {
-		this.utilsService.signIn(account, key).subscribe( () => {
+	logIn(account: string, key: string, endpointSuffix: string) {
+		this.utilsService.signIn(account, key, endpointSuffix).subscribe( () => {
 			this.loading = false;
 			this.signedIn.emit(true);
-			this.utilsService.saveCredntials(account, key);
+			this.utilsService.saveCredntials(account, key, endpointSuffix);
 		}, error => {
 			console.error(error)
 			this.logOut();

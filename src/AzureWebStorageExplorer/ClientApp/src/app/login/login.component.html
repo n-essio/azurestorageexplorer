@@ -19,6 +19,11 @@
 					<i class="key icon"></i>
 				</div>
 				<p></p>
+				<div class="ui left icon input">
+					<input #azureEndpointSuffix type="text" placeholder="Endpoint Suffix" (keyup)="typingMessage($event)">
+					<i class="caret icon"></i>
+				</div>
+				<p></p>
 				<button class="ui active button" (click)="signIn()">
 					<i class="user icon"></i>
 					Login

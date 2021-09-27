@@ -10,6 +10,7 @@ export class UtilsService {
 
 	private account: string | null;
 	private key: string | null;
+  private endpointSuffix: string | null;
 
 	constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
 
@@ -21,7 +22,7 @@ export class UtilsService {
 
 	private loadCredentials(url: string) {
 
-		let credentials = '?account=' + this.getAccount() + '&key=' + this.getKey();
+		let credentials = '?account=' + this.getAccount() + '&key=' + this.getKey() + '&endpointSuffix=' + this.getEndpointSuffix();
 
 		if (url.lastIndexOf('?') > 0)
 			credentials = credentials.replace('?', '&');
@@ -41,18 +42,28 @@ export class UtilsService {
 		return this.key;
 	}
 
-	signIn(account: string, key: string) {
-		return this.http.get(this.baseUrl + 'api/Queues/GetQueues?account=' + account + '&key=' + key);
+  getEndpointSuffix() {
+		if (!this.endpointSuffix)
+			this.endpointSuffix = localStorage.getItem('endpointSuffix');
+    if ( !this.endpointSuffix)
+      this.endpointSuffix = 'core.windows.net';
+		return this.endpointSuffix;
 	}
 
-	saveCredntials(account: string, key: string) {
+	signIn(account: string, key: string, endpointSuffix: string) {
+		return this.http.get(this.baseUrl + 'api/Queues/GetQueues?account=' + account + '&key=' + key + '&endpointSuffix=' + endpointSuffix);
+	}
+
+	saveCredntials(account: string, key: string, endpointSuffix: string) {
 		localStorage.setItem('account', account);
 		localStorage.setItem('key', key);
+		localStorage.setItem('endpointSuffix', this.endpointSuffix);
 	}
 
 	clearCredentials() {
 		this.account = null;
 		this.key = null;
+		this.endpointSuffix = null;
 		localStorage.clear();
 	}
 
